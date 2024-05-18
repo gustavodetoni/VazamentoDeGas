@@ -1,0 +1,189 @@
+[
+    {
+        "id": "242bcaaadfddd69a",
+        "type": "tab",
+        "label": "Fluxo 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b80b3ccdd042704c",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "985f944517a3236c",
+        "type": "node-red-contrib-whatsapp-cmb-account",
+        "name": "GustavoDetoni"
+    },
+    {
+        "id": "1c56d21b47c2fa10",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": "8086",
+        "protocol": "http",
+        "database": "database",
+        "name": "sistemagas",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "https://us-east-1-1.aws.cloud2.influxdata.com",
+        "timeout": "10",
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "5da91c3cb4aef2eb",
+        "type": "serial-port",
+        "name": "VazamentoGas",
+        "serialport": "COM5",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "25f574e8765da29b",
+        "type": "arduino-board",
+        "device": "COM1"
+    },
+    {
+        "id": "a8cc200c333c68a9",
+        "type": "arduino-board",
+        "device": "tinkercard"
+    },
+    {
+        "id": "function-node-id",
+        "type": "function",
+        "z": "242bcaaadfddd69a",
+        "name": "Check Value",
+        "func": "var valor = msg.payload;\nif (valor < 470) {\n    msg.payload = \"Sistema de vazamento de Gás: Um possivel vazamento de gas pode estar acontecendo.\";\n    return msg;\n} if (valor > 470 && valor < 600) {\n    msg.payload = \"Sistema de vazamento de Gás: O sistema detectou um vazamento de gás, ATENÇÃO!\";\n    return msg;\n} if (valor > 600) {\n    msg.payload = \"Sistema de vazamento de Gás : ATENÇÃO!, vazamento de gás, o nível detectado pelo sistema é altissimo.\";\n    return msg;\n}\nreturn null;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 340,
+        "wires": [
+            [
+                "b3ae833a460903b2",
+                "5ee6bd8b8d46f19f"
+            ]
+        ]
+    },
+    {
+        "id": "b97858315d22565c",
+        "type": "debug",
+        "z": "242bcaaadfddd69a",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "896e9803bcb960a7",
+        "type": "mqtt in",
+        "z": "242bcaaadfddd69a",
+        "name": "",
+        "topic": "TESTMACK1165744/Gas",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "b80b3ccdd042704c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 290,
+        "y": 280,
+        "wires": [
+            [
+                "function-node-id"
+            ]
+        ]
+    },
+    {
+        "id": "b3ae833a460903b2",
+        "type": "influxdb out",
+        "z": "242bcaaadfddd69a",
+        "influxdb": "1c56d21b47c2fa10",
+        "name": "",
+        "measurement": "sistema_gas",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "AtvMackenzie",
+        "bucket": "dados_gas",
+        "x": 690,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "5ee6bd8b8d46f19f",
+        "type": "node-red-contrib-whatsapp-cmb-send-message",
+        "z": "242bcaaadfddd69a",
+        "name": "",
+        "credtype": "account",
+        "account": "985f944517a3236c",
+        "text": "payload",
+        "phonenumbervalue": "",
+        "apikeyvalue": "",
+        "apikeyinputtypemessage": "msg",
+        "phonenumberinputtypemessage": "msg",
+        "inputtypemessage": "msg",
+        "rejectssl": false,
+        "x": 600,
+        "y": 420,
+        "wires": [
+            [
+                "b97858315d22565c"
+            ]
+        ]
+    }
+]
