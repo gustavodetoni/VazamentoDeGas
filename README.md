@@ -20,4 +20,6 @@ Este projeto implementa um sistema de alerta de vazamento de gás utilizando tec
 
 ## Demonstração
 
+Vídeo demostrando a funcionalidade do projeto. ⬇️
+
 [![Watch the video](https://img.youtube.com/vi/OsJJ6lBrP54/0.jpg)](https://youtu.be/OsJJ6lBrP54)
